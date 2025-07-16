@@ -1,0 +1,71 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# VSCode 설정 파일
+.vscode/
+
+# PyCharm 설정 파일
+.idea/
+
+# 환경 변수 파일
+*.env
+
+# macOS 파일
+.DS_Store
+
+# 로그 파일
+*.log
+
+# pytest 결과
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# pip wheel cache
+*.whl
+
+# SQLLite DB
+*.sqlite3
+
+# Temporary files
+*.bak
+*.tmp
+
+# Streamlit Cache
+.streamlit/
+
+# Local config files
+config.yaml
+
+vectors/
