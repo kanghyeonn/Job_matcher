@@ -69,3 +69,6 @@ dist/
 config.yaml
 
 vectors/
+venv2/
+.venv/
+sqlite_cache/

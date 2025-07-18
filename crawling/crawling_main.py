@@ -18,7 +18,7 @@ conn = mysql.connector.connect(
 cursor = conn.cursor()
 
 
-for page in range(1,3):
+for page in range(3,5):
     try:
         page_soup = get_page_soup(page)
         #print("page soup")

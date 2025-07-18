@@ -2,33 +2,30 @@ import uuid
 
 from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import HumanMessage, AIMessage
-from pandas.core.dtypes.inference import is_float
 
 from main import *
 from preprocessing_uploadfile import *
 import streamlit as st
 import uuid
 
-if 'seesion_id' not in st.session_state:
-    st.session_state.seesion_id = str(uuid.uuid4())
-session_id = st.session_state.seesion_id
+if 'session_id' not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+session_id = st.session_state.session_id
 
 if 'vector_store' not in st.session_state:
     st.session_state.vector_store = load_vector_store()
 
-if 'chain' not in st.session_state:
-    st.session_state.chain, st.session_state.retriever = create_chain(
-        st.session_state.vector_store
-    )
+if 'is_first_question' not in st.session_state:
+    st.session_state.is_first_question = True
+
+if 'summary_text' not in st.session_state:
+    st.session_state.summary_text = None
 
 if 'all_memory' not in st.session_state:
     st.session_state.all_memory = {}
 
-if 'is_first_question' not in st.session_state:
-    st.session_state.is_first_question = True
-
 if session_id not in st.session_state.all_memory:
-    st.session_state_all_memory[session_id] = ConversationBufferMemory(return_messages=True)
+    st.session_state.all_memory[session_id] = ConversationBufferMemory(return_messages=True)
 
 user_memory = st.session_state.all_memory[session_id]
 
@@ -47,9 +44,14 @@ for message in user_memory.chat_memory.messages:
 if uploaded_file is not None:
     with st.spinner("⏳ 이력서를 분석하는 중입니다..."):
         extracted_text = extract_text_from_file(uploaded_file)
-        summary_text = summary_uploadfile_text(extracted_text)
-    st.subheader("📄 이력서 요약")
-    st.markdown(summary_text['학력'])
+        st.session_state.summary_text = summary_uploadfile_text(extracted_text)
+    #st.subheader("📄 이력서 요약")
+    #st.markdown(summary_text['학력'])
+    if 'chain' not in st.session_state:
+        st.session_state.chain, st.session_state.retriever = create_chain(
+            st.session_state.vector_store,
+            is_first=True
+        )
 
     user_input = st.chat_input("💬 궁금한 내용을 입력해 주세요")
     if user_input:
@@ -64,9 +66,13 @@ if uploaded_file is not None:
                 st.session_state.retriever,
                 user_input,
                 history,
-                is_fist=True
+                st.session_state.summary_text
             )
             st.session_state.is_first_question = False
+
+            st.session_state.chain, st.session_state.retriever = create_chain(
+                st.session_state.vector_store, is_first=False
+            )
         else:
             ai_response = get_answer(
                 st.session_state.chain,
